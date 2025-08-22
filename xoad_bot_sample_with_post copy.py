@@ -480,18 +480,17 @@ async def report_cmd(interaction: discord.Interaction, rtype: str, details: str)
     user = interaction.user
     ensure_user(user)
     rid = create_report(user.id, rtype, details)
-    # Embedで通知＋承認/否認ボタン
-    embed = discord.Embed(
-        title=f"新規申請: {rtype}",
-        description=details,
-        color=discord.Color.orange()
-    )
-    embed.add_field(name="申請者", value=interaction.user.mention)
-    embed.add_field(name="申請ID", value=str(rid))
-    view = ReportActionView(rid, user.id, rtype, details)
+    # 申請通知
     channel = interaction.guild.get_channel(REPORT_NOTIFY_CHANNEL_ID)
     if channel:
-        await channel.send(embed=embed, view=view)
+        embed = discord.Embed(
+            title=f"新規申請: {rtype}",
+            description=details,
+            color=discord.Color.orange()
+        )
+        embed.add_field(name="申請者", value=interaction.user.mention)
+        embed.add_field(name="申請ID", value=str(rid))
+        await channel.send(embed=embed)
     await interaction.response.send_message("申請を登録しました。", ephemeral=True)
 
 
